@@ -64,6 +64,7 @@ class UsuarioController {
                 sameSite: 'none',       // ⬅️ Lax funciona bien en la mayoría de los casos sin requerir HTTPS
                 maxAge: 24 * 60 * 60 * 1000,
                 path: '/',
+                domain: ".railway.app"
             });
 
             return res.status(200).json({
@@ -86,6 +87,7 @@ class UsuarioController {
             secure: true,
             sameSite: 'none',
             path: "/",
+            domain: ".railway.app"
         });
         res.status(200).json({ message: "LogOut exitoso" });
     }

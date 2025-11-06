@@ -13,6 +13,10 @@ import viajeRouter from "./router/viaje-router.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://onemorepointsfront-production.up.railway.app",
+];
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URL)
@@ -26,10 +30,22 @@ const __dirname = path.dirname(__filename);
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({
-    origin: "http://localhost:5173",
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Permitir requests sin origin (por ejemplo, Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("CORS no permitido por este dominio"));
+      }
+    },
     credentials: true,
-}));
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  })
+);
 
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
